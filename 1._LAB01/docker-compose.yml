@@ -1,0 +1,71 @@
+services:
+  ollama:
+    image: ${OLLAMA_IMAGE}
+    container_name: ollama
+    restart: unless-stopped
+    ports:
+      - "${OLLAMA_PORT}:11434"
+    volumes:
+      - ${OLLAMA_DATA_DIR}:/root/.ollama
+    environment:
+      OLLAMA_HOST: "0.0.0.0:11434"
+    command: ["serve"]
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  webui:
+    build:
+      context: ./docker/webui
+      dockerfile: Dockerfile
+    container_name: webui
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    ports:
+      - "${OPEN_WEBUI_PORT}:8080"
+    environment:
+      OLLAMA_URL: "http://ollama:${OLLAMA_PORT}"
+      DEFAULT_MODEL: "${DEFAULT_MODEL}"
+      WEBUI_LOG_DIR: /logs
+      # Allowlist source for the model dropdown. Without this, the webui
+      # would list every model on the shared ollama daemon — including
+      # hebi-* models built for other labs during dev.
+      ALLOWED_BASE_MODELS: "${OLLAMA_MODELS}"
+    depends_on:
+      - ollama
+    volumes:
+      - ${LOG_DIR}:/logs
+      - ../shared/branding:/app/static/branding:ro
+      - ../shared/templates:/app/templates/shared:ro
+      # Read-only mount so the webui can enumerate this lab's custom
+      # modelfiles for the allowlist (filename → name:latest in dropdown).
+      - ./modelfiles:/app/modelfiles:ro
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8080/', timeout=5)\""]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  chroma:
+    build:
+      context: ./docker/chroma
+      dockerfile: Dockerfile
+    container_name: chroma
+    restart: unless-stopped
+    ports:
+      - "${CHROMA_PORT}:8001"
+    volumes:
+      - ${CHROMA_DATA_DIR}:/data
+      - ${LOG_DIR}:/logs
+    environment:
+      CHROMA_PERSIST_DIR: /data
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8001/health', timeout=5)\""]
+      interval: 15s
+      timeout: 5s
+      retries: 5

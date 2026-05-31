@@ -1,0 +1,28 @@
+# GPU override — adds an NVIDIA reservation to the ollama service.
+#
+# CPU is the default in docker-compose.yml so the lab works out of the box
+# on machines without an NVIDIA adapter (most laptops, WSL without GPU
+# passthrough, cloud VMs without GPU SKUs).
+#
+# Apply this override when you DO have a working NVIDIA GPU and want
+# hardware-accelerated inference:
+#
+#   docker compose -f docker-compose.yml -f docker-compose.gpu.yml up -d
+#
+# The lab's scripts/install.sh and scripts/start.sh add this file
+# automatically when HEBI_NO_GPU=0 (set by service-dashboard/run.sh's
+# preflight when nvidia-smi + a working adapter are detected).
+#
+# Additive overrides like this are reliable; the inverse pattern
+# (declaring GPU in base, "removing" it in cpu.yml) does not work because
+# Compose deep-merges dicts instead of replacing them.
+
+services:
+  ollama:
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]

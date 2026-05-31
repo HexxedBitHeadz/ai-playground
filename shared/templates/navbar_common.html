@@ -1,0 +1,15 @@
+<nav class="navbar" role="navigation">
+  <div class="navbar-brand">
+    <span class="navbar-item">{{ lab_num }} &nbsp;<span class="tag is-lab">{{ lab_title }}</span></span>
+    {{ navbar_status | default('') }}
+  </div>
+  <div class="navbar-end">
+    {{ navbar_actions | default('') }}
+    <button class="btn-guide" id="guide-btn">Lab Guide</button>
+    <button class="btn-theme" id="theme-toggle">Light</button>
+    <div class="hexxed-brand">
+      <img src="/static/branding/logo.svg" alt="Hexxed BitHeadz" class="brand-logo" onerror="this.style.display='none'">
+      <span class="brand-text">AI Labs by Hexxed BitHeadz</span>
+    </div>
+  </div>
+</nav>

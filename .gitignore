@@ -1,0 +1,56 @@
+# Python virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Python artifacts
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# Environment variables
+.env
+.env.local
+*.env
+
+# Logs and data
+logs/
+*.log
+data/
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Claude Code session settings (local-only)
+.claude/
+
+# Docker
+*.override.yml
+
+# AI model weights (never commit these)
+*.gguf
+*.ggml
+*.bin
+*.safetensors
+*.pt
+*.pth
+*.ckpt
+*.pkl
+models/
+weights/
+
+# Dashboard runtime state (installed-labs registry)
+service-dashboard/state/

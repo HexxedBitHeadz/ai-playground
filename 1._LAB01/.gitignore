@@ -1,0 +1,17 @@
+# Local data and logs
+/data
+/logs
+
+# Dashboard runtime state — written by progress.sh during install/start
+.dashboard-progress
+
+# install.sh phase-4 sidecar (sha256 of each modelfile at last build)
+.modelfile-hashes
+
+# IDE and OS files
+.vscode/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python

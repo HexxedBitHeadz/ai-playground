@@ -1,0 +1,10 @@
+{
+  "id": "lab01",
+  "name": "LAB 01",
+  "title": "Prompt Injection",
+  "description": "Explore direct and indirect prompt injection attacks against an LLM-powered web UI. Learn how adversarial instructions hijack model behavior.",
+  "difficulty": "Beginner",
+  "topic": "Prompt Attacks",
+  "port": 8081,
+  "released": true
+}

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" fill="#06070d"/>
+  <!-- Outer hex frame, cyan -->
+  <path d="M32 4 L58 18 L58 46 L32 60 L6 46 L6 18 Z"
+        fill="none" stroke="#22d3ee" stroke-width="2"/>
+  <!-- Inner hex, purple -->
+  <path d="M32 14 L50 23 L50 41 L32 50 L14 41 L14 23 Z"
+        fill="none" stroke="#7c3aed" stroke-width="1.5"/>
+  <!-- Stylized H -->
+  <g fill="#e2e8f0" font-family="Orbitron, monospace" font-weight="900">
+    <text x="32" y="40" text-anchor="middle" font-size="22" letter-spacing="-1">H</text>
+  </g>
+  <!-- Scanline -->
+  <line x1="8" y1="33" x2="56" y2="33" stroke="#22d3ee" stroke-width="0.5" opacity="0.4"/>
+</svg>

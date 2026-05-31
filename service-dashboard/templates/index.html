@@ -1,0 +1,1694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Security Labs — Hexxed BitHeadz</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@700;900&display=swap">
+  <link rel="icon" type="image/svg+xml" href="/static/branding/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/static/branding/favicon.png">
+  <style>
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #06070d;
+      --surface:  #0c0e1a;
+      --surface2: #111428;
+      --border:   #1e2240;
+      --accent:   #7c3aed;
+      --acid:     #a855f7;
+      --glow:     rgba(124, 58, 237, 0.55);
+      --cyan:     #22d3ee;
+      --green:    #10b981;
+      --yellow:   #f59e0b;
+      --red:      #ef4444;
+      --text:     #e2e8f0;
+      --muted:    #64748b;
+      --mono:     'Share Tech Mono', monospace;
+      --display:  'Orbitron', sans-serif;
+      --ui:       'Rajdhani', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--ui);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── Hex grid background ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        radial-gradient(circle at 20% 50%, rgba(124,58,237,0.07) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(34,211,238,0.04) 0%, transparent 40%),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='100'%3E%3Cpath d='M28 66L0 50V18L28 2l28 16v32L28 66zm0 34L0 84V52l28-16 28 16v32L28 100z' fill='none' stroke='%231e2240' stroke-width='1'/%3E%3C/svg%3E");
+      background-size: auto, auto, 56px 100px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Scanlines ── */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.08) 2px,
+        rgba(0,0,0,0.08) 4px
+      );
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* ── Navbar ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      height: 108px;
+      display: flex;
+      align-items: center;
+      padding: 0 2.5rem;
+      gap: 1.75rem;
+      background: rgba(6, 7, 13, 0.88);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 4px 50px rgba(124,58,237,0.22);
+    }
+
+    .nav-corner {
+      position: absolute;
+      left: 0; top: 0;
+      width: 5px; height: 100%;
+      background: linear-gradient(180deg, var(--accent), var(--cyan));
+      box-shadow: 0 0 18px rgba(124,58,237,.5);
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 1.4rem;
+      text-decoration: none;
+    }
+    .nav-logo img {
+      height: 72px;
+      width: auto;
+      filter: drop-shadow(0 0 14px var(--glow));
+    }
+    .nav-logo-glyph {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 72px;
+      height: 72px;
+      border: 2px solid var(--accent);
+      border-radius: 8px;
+      color: var(--cyan);
+      font-family: var(--display);
+      font-size: 2.4rem;
+      box-shadow: 0 0 24px rgba(124,58,237,.45);
+    }
+    .nav-logo-text {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.15;
+      gap: 4px;
+    }
+    .nav-logo-text .line1 {
+      font-family: var(--display);
+      font-size: 1.45rem;
+      font-weight: 900;
+      color: var(--text);
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      text-shadow: 0 0 22px rgba(124,58,237,.35);
+    }
+    .nav-logo-text .line2 {
+      font-family: var(--mono);
+      font-size: .85rem;
+      color: var(--acid);
+      letter-spacing: .14em;
+    }
+
+    .nav-spacer { flex: 1; }
+
+    /* Right-side info block alongside the badge */
+    .nav-info {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: .4rem;
+    }
+    .nav-badge {
+      font-family: var(--mono);
+      font-size: .82rem;
+      color: var(--acid);
+      border: 1px solid rgba(168,85,247,0.4);
+      border-radius: 4px;
+      padding: .5rem 1rem;
+      letter-spacing: .1em;
+      background: rgba(124,58,237,0.12);
+      text-transform: uppercase;
+    }
+    .nav-session {
+      font-family: var(--mono);
+      font-size: .65rem;
+      color: var(--muted);
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .nav-session b { color: var(--cyan); font-weight: normal; }
+
+    /* ── Alert bar ── */
+    #alert-bar {
+      display: none;
+      position: relative;
+      z-index: 150;
+      background: rgba(124,58,237,0.12);
+      border-bottom: 1px solid rgba(124,58,237,0.5);
+      padding: .55rem 2rem;
+      font-family: var(--mono);
+      font-size: .7rem;
+      color: var(--acid);
+      text-align: center;
+      letter-spacing: .03em;
+    }
+    #alert-bar::before { content: '// '; color: var(--muted); }
+    #alert-bar.visible { display: block; }
+
+    /* ── Disconnected banner: shown when poll() keeps failing ── */
+    #disconnected-banner {
+      display: none;
+      position: relative;
+      z-index: 200;
+      background: rgba(239,68,68,0.15);
+      border-bottom: 1px solid rgba(239,68,68,0.6);
+      padding: .55rem 2rem;
+      font-family: var(--mono);
+      font-size: .7rem;
+      color: var(--red);
+      text-align: center;
+      letter-spacing: .03em;
+    }
+    #disconnected-banner::before { content: '// DISCONNECTED // '; color: var(--muted); }
+    #disconnected-banner.visible { display: block; }
+
+    /* ── Main ── */
+    main {
+      position: relative;
+      z-index: 10;
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem;
+    }
+
+    /* ── Page header ── */
+    .page-header {
+      margin-bottom: 2.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .page-header-left {}
+    .page-eyebrow {
+      font-family: var(--mono);
+      font-size: .8rem;
+      color: var(--acid);
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      margin-bottom: .55rem;
+    }
+    .page-eyebrow::before { content: '> '; }
+    .page-title {
+      font-family: var(--display);
+      font-size: 2.8rem;
+      font-weight: 900;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--text);
+      line-height: 1;
+      text-shadow: 0 0 30px rgba(124,58,237,.25);
+    }
+    .page-title .accent { color: var(--accent); }
+    .page-sub {
+      margin-top: .5rem;
+      font-size: .82rem;
+      color: var(--muted);
+      font-family: var(--mono);
+      letter-spacing: .02em;
+    }
+    .page-header-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: .3rem;
+    }
+    .sys-stat {
+      font-family: var(--mono);
+      font-size: .65rem;
+      color: var(--muted);
+      letter-spacing: .04em;
+    }
+    .sys-stat .val { color: var(--green); }
+
+    /* ── Grid ── */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 1.25rem;
+    }
+
+    /* ── Card ── */
+    .card {
+      position: relative;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      overflow: hidden;
+      transition: border-color .25s, box-shadow .25s;
+      clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 0 100%);
+    }
+
+    /* Clipped corner accent */
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; right: 0;
+      width: 40px; height: 40px;
+      background: linear-gradient(225deg, var(--accent) 0%, transparent 55%);
+      opacity: 0;
+      transition: opacity .25s;
+    }
+    .card:hover { border-color: var(--accent); box-shadow: 0 0 24px rgba(124,58,237,.18), inset 0 0 30px rgba(124,58,237,.04); }
+    .card:hover::before { opacity: .6; }
+    .card.running  { border-color: var(--green);  box-shadow: 0 0 20px rgba(16,185,129,.15); }
+    .card.starting { border-color: var(--yellow); box-shadow: 0 0 20px rgba(245,158,11,.12); }
+    .card.stopping { border-color: var(--yellow); }
+    .card.installing { border-color: var(--accent); box-shadow: 0 0 16px rgba(124,58,237,.18); }
+    .card.error    { border-color: var(--red);    box-shadow: 0 0 20px rgba(239,68,68,.15); }
+
+    /* Accent left bar */
+    .card-bar {
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 2px;
+      background: var(--border);
+      transition: background .25s;
+    }
+    .card:hover .card-bar          { background: var(--accent); }
+    .card.running  .card-bar       { background: var(--green); }
+    .card.starting .card-bar,
+    .card.stopping .card-bar       { background: var(--yellow); }
+    .card.installing .card-bar     { background: var(--accent); }
+    .card.error    .card-bar       { background: var(--red); }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .lab-id {
+      font-family: var(--mono);
+      font-size: .6rem;
+      color: var(--muted);
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      margin-bottom: .3rem;
+    }
+
+    .card-title {
+      font-family: var(--display);
+      font-size: .95rem;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--text);
+    }
+
+    /* Status indicator */
+    .status-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+    .status-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--muted);
+      box-shadow: none;
+    }
+    .status-dot.running  { background: var(--green);  box-shadow: 0 0 8px var(--green);  animation: pulse 2s infinite; }
+    .status-dot.starting { background: var(--yellow); box-shadow: 0 0 8px var(--yellow); animation: pulse .9s infinite; }
+    .status-dot.stopping { background: var(--yellow); animation: pulse .9s infinite; }
+    .status-dot.installing { background: var(--accent); box-shadow: 0 0 8px var(--accent); animation: pulse .9s infinite; }
+    .status-dot.error    { background: var(--red);    box-shadow: 0 0 8px var(--red); }
+
+    @keyframes pulse {
+      0%,100% { opacity:1; transform:scale(1); }
+      50%      { opacity:.4; transform:scale(.8); }
+    }
+
+    .status-code {
+      font-family: var(--mono);
+      font-size: .58rem;
+      letter-spacing: .06em;
+      color: var(--muted);
+    }
+    .status-code.running  { color: var(--green); }
+    .status-code.starting { color: var(--yellow); }
+    .status-code.stopping { color: var(--yellow); }
+    .status-code.installing { color: var(--accent); }
+    .status-code.error    { color: var(--red); }
+
+    /* Empty state — shown when no labs are installed */
+    .empty-state {
+      text-align: center;
+      padding: 4rem 1.5rem 5rem;
+      border: 1px dashed var(--border);
+      background:
+        repeating-linear-gradient(
+          135deg,
+          transparent 0,
+          transparent 12px,
+          rgba(124,58,237,0.025) 12px,
+          rgba(124,58,237,0.025) 24px
+        );
+      color: var(--text);
+    }
+    .empty-state-icon {
+      font-family: var(--mono);
+      font-size: 2.5rem;
+      color: var(--cyan);
+      letter-spacing: .15em;
+      margin-bottom: 1rem;
+      opacity: 0.7;
+    }
+    .empty-state-title {
+      font-family: var(--display);
+      font-size: 1.5rem;
+      letter-spacing: .12em;
+      color: var(--text);
+      margin-bottom: 1rem;
+    }
+    .empty-state-body {
+      font-family: var(--ui);
+      font-size: .95rem;
+      line-height: 1.7;
+      color: var(--muted);
+      max-width: 540px;
+      margin: 0 auto;
+    }
+    .empty-state-body strong { color: var(--text); font-weight: 600; }
+    .empty-state-cmd {
+      display: inline-block;
+      margin: 1.25rem 0;
+      padding: .85rem 1.4rem;
+      background: var(--surface);
+      border: 1px solid var(--cyan);
+      border-radius: 2px;
+      font-family: var(--mono);
+      font-size: 1rem;
+      color: var(--cyan);
+      letter-spacing: .04em;
+    }
+    .empty-state-link {
+      color: var(--cyan);
+      text-decoration: none;
+      border-bottom: 1px dotted var(--cyan);
+    }
+    .empty-state-link:hover { color: var(--text); border-color: var(--text); }
+
+    /* Tags */
+    .tags { display: flex; gap: .4rem; flex-wrap: wrap; }
+    .tag {
+      font-family: var(--mono);
+      font-size: .58rem;
+      padding: .18rem .5rem;
+      border-radius: 2px;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      border: 1px solid;
+    }
+    .tag-beginner     { border-color: rgba(16,185,129,.4); color: var(--green); background: rgba(16,185,129,.07); }
+    .tag-intermediate { border-color: rgba(34,211,238,.4); color: var(--cyan);  background: rgba(34,211,238,.07); }
+    .tag-advanced     { border-color: rgba(245,158,11,.4); color: var(--yellow);background: rgba(245,158,11,.07); }
+    .tag-expert       { border-color: rgba(239,68,68,.4);  color: var(--red);   background: rgba(239,68,68,.07); }
+    .tag-topic        { border-color: var(--border); color: var(--muted); background: transparent; }
+
+    /* Description */
+    .card-desc {
+      font-size: .8rem;
+      color: var(--muted);
+      line-height: 1.6;
+      flex: 1;
+      font-family: var(--ui);
+    }
+
+    /* Footer */
+    .card-footer {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      padding-top: .75rem;
+      border-top: 1px solid var(--border);
+      margin-top: auto;
+    }
+
+    /* Buttons */
+    .btn {
+      border: 1px solid;
+      border-radius: 2px;
+      padding: .38rem .85rem;
+      font-family: var(--mono);
+      font-size: .68rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all .15s;
+      white-space: nowrap;
+      background: transparent;
+    }
+    .btn:disabled { opacity: .35; cursor: not-allowed; }
+
+    .btn-start {
+      color: var(--accent);
+      border-color: var(--accent);
+      background: rgba(124,58,237,.08);
+    }
+    .btn-start:hover:not(:disabled) {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 0 14px var(--glow);
+    }
+
+    .btn-stop {
+      color: var(--red);
+      border-color: rgba(239,68,68,.5);
+      background: rgba(239,68,68,.06);
+    }
+    .btn-stop:hover:not(:disabled) {
+      background: rgba(239,68,68,.18);
+      box-shadow: 0 0 10px rgba(239,68,68,.25);
+    }
+
+    .btn-open {
+      color: var(--cyan);
+      border-color: rgba(34,211,238,.4);
+      background: rgba(34,211,238,.06);
+    }
+    .btn-open:hover:not(:disabled) {
+      background: rgba(34,211,238,.15);
+      box-shadow: 0 0 10px rgba(34,211,238,.2);
+    }
+
+    .btn-clear {
+      color: var(--muted);
+      border-color: var(--border);
+    }
+    .btn-clear:hover:not(:disabled) { color: var(--text); }
+
+    /* Install button — for uninstalled (available) labs */
+    .btn-install {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(124,58,237,0.06);
+      width: 100%;
+      justify-content: center;
+    }
+    .btn-install:hover:not(:disabled) {
+      background: rgba(124,58,237,0.18);
+      color: var(--text);
+      box-shadow: 0 0 12px rgba(124,58,237,0.35);
+    }
+
+    /* Uninstalled (available) card — dimmed, muted status */
+    .card-uninstalled .card-title,
+    .card-uninstalled .lab-id { opacity: .55; }
+    .card-uninstalled .card-desc { opacity: .65; }
+    .card-uninstalled .tag { opacity: .7; }
+    .card-uninstalled .card-bar { background: linear-gradient(180deg, var(--muted), var(--border)); }
+    .status-available {
+      font-family: var(--mono);
+      font-size: .7rem;
+      letter-spacing: .12em;
+      color: var(--muted);
+      border: 1px dashed var(--muted);
+      padding: .12rem .5rem;
+      border-radius: 2px;
+    }
+
+    /* Progress block — shown under BOOTING badge during a lab launch */
+    .progress {
+      display: none;
+      margin: .65rem 0 .35rem;
+      padding: .55rem .7rem;
+      background: rgba(34,211,238,0.06);
+      border: 1px solid rgba(34,211,238,0.35);
+      border-radius: 2px;
+      font-family: var(--mono);
+      font-size: .72rem;
+      color: var(--text);
+    }
+    .progress.visible { display: block; }
+    .progress-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: .75rem;
+      margin-bottom: .35rem;
+    }
+    .progress-label {
+      letter-spacing: .08em;
+      color: var(--cyan);
+      text-transform: uppercase;
+    }
+    .progress-step {
+      color: var(--muted);
+      font-size: .65rem;
+    }
+    .progress-detail {
+      color: var(--muted);
+      font-style: italic;
+      font-size: .68rem;
+      min-height: 1em;       /* keep block height steady when detail empty */
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .progress-bar {
+      margin-top: .4rem;
+      display: flex;
+      gap: 3px;
+    }
+    .progress-bar > span {
+      flex: 1;
+      height: 4px;
+      background: rgba(34,211,238,0.15);
+      border-radius: 1px;
+      transition: background .2s ease;
+    }
+    .progress-bar > span.done { background: var(--cyan); }
+    .progress-bar > span.active {
+      background: linear-gradient(90deg, var(--cyan), transparent, var(--cyan));
+      background-size: 200% 100%;
+      animation: progress-shimmer 1.2s linear infinite;
+    }
+    @keyframes progress-shimmer {
+      0%   { background-position: 100% 0; }
+      100% { background-position: -100% 0; }
+    }
+
+    /* Live-output pane — small terminal-style window that streams the tail
+       of install.log while progress is active, so the reader can see what
+       docker is actually doing during the slow image-build phase. */
+    .live-log {
+      display: none;
+      margin-top: .55rem;
+      background: rgba(0,0,0,.45);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      font-family: var(--mono);
+      font-size: .62rem;
+      line-height: 1.45;
+    }
+    .live-log.visible { display: block; }
+    .live-log-head {
+      padding: .25rem .55rem;
+      color: var(--cyan);
+      letter-spacing: .05em;
+      border-bottom: 1px solid var(--border);
+      background: rgba(34,211,238,.05);
+    }
+    .live-log-body {
+      margin: 0;
+      padding: .5rem .55rem;
+      color: var(--text-muted);
+      max-height: 140px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    /* Fault panel — shown only when a card is in error state, surfacing
+       the captured error message and a link to the install log. */
+    .fault-panel {
+      display: none;
+      margin-top: .75rem;
+      padding: .65rem .7rem;
+      background: rgba(239,68,68,0.08);
+      border: 1px solid rgba(239,68,68,0.3);
+      border-radius: 4px;
+      font-family: var(--mono);
+      font-size: .72rem;
+      line-height: 1.55;
+      color: var(--text);
+    }
+    .fault-panel.visible { display: block; }
+    .fault-title {
+      color: var(--red);
+      font-size: .65rem;
+      letter-spacing: .05em;
+      margin-bottom: .35rem;
+    }
+    .fault-message { white-space: pre-wrap; color: var(--text); margin-bottom: .5rem; }
+    .fault-actions { margin-top: .35rem; display: flex; flex-wrap: wrap; gap: .35rem; }
+    .fault-log-btn {
+      background: transparent;
+      color: var(--red);
+      border: 1px solid rgba(239,68,68,0.4);
+      padding: .25rem .5rem;
+      font-family: var(--mono);
+      font-size: .65rem;
+      cursor: pointer;
+      letter-spacing: .05em;
+    }
+    .fault-log-btn:hover { background: rgba(239,68,68,0.15); }
+    .fault-log {
+      display: none;
+      margin-top: .5rem;
+      padding: .5rem;
+      background: rgba(0,0,0,0.35);
+      border: 1px solid rgba(239,68,68,0.2);
+      border-radius: 3px;
+      font-family: var(--mono);
+      font-size: .62rem;
+      color: var(--text-muted);
+      max-height: 280px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .fault-log.visible { display: block; }
+
+    .btn-spacer { flex: 1; }
+
+    /* Spinner */
+    .spinner {
+      display: inline-block;
+      width: 8px; height: 8px;
+      border: 1.5px solid rgba(255,255,255,.2);
+      border-top-color: currentColor;
+      border-radius: 50%;
+      animation: spin .55s linear infinite;
+      margin-right: .35rem;
+      vertical-align: middle;
+    }
+    @keyframes spin { to { transform:rotate(360deg); } }
+
+    /* ── Glitch title effect ── */
+    .glitch {
+      position: relative;
+      display: inline-block;
+    }
+    .glitch::before,
+    .glitch::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+    }
+    .glitch::before {
+      color: var(--cyan);
+      animation: glitch1 4s infinite linear;
+    }
+    .glitch::after {
+      color: var(--red);
+      animation: glitch2 4s infinite linear;
+    }
+    @keyframes glitch1 {
+      0%,90%,100% { clip:rect(0,9999px,0,0); transform:translate(0); }
+      91%  { clip:rect(12px,9999px,20px,0); transform:translate(-2px,0); }
+      93%  { clip:rect(40px,9999px,46px,0); transform:translate(2px,0); }
+      95%  { clip:rect(5px,9999px,12px,0);  transform:translate(-1px,0); }
+    }
+    @keyframes glitch2 {
+      0%,90%,100% { clip:rect(0,9999px,0,0); transform:translate(0); }
+      92%  { clip:rect(30px,9999px,36px,0); transform:translate(2px,0); }
+      94%  { clip:rect(8px,9999px,14px,0);  transform:translate(-2px,0); }
+      96%  { clip:rect(50px,9999px,56px,0); transform:translate(1px,0); }
+    }
+
+    /* ── Ticker ── */
+    .ticker-wrap {
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+      height: 28px;
+      display: flex;
+      align-items: stretch;
+      position: relative;
+      z-index: 10;
+    }
+    .ticker-label {
+      flex-shrink: 0;
+      font-family: var(--mono);
+      font-size: .6rem;
+      color: var(--accent);
+      background: rgba(124,58,237,.15);
+      border-right: 1px solid var(--border);
+      padding: 0 .75rem;
+      display: flex;
+      align-items: center;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      z-index: 2;
+    }
+    .ticker-scroll {
+      flex: 1;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+    }
+    .ticker-track {
+      display: flex;
+      gap: 3rem;
+      animation: ticker 60s linear infinite;
+      white-space: nowrap;
+      padding-left: 2rem;
+      will-change: transform;
+    }
+    .ticker-track:hover { animation-play-state: paused; }
+    .ticker-track span {
+      font-family: var(--mono);
+      font-size: .6rem;
+      color: var(--muted);
+      letter-spacing: .05em;
+    }
+    .ticker-track span b { color: var(--acid); font-weight: 400; }
+    /* Track is rendered 3× so loop point is at -33.333% (one full set down) */
+    @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-33.333%); } }
+
+    /* ── Subtle CRT vignette ── */
+    .crt-vignette {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 2;
+      background:
+        radial-gradient(ellipse at center,
+          transparent 60%,
+          rgba(0,0,0,0.35) 100%);
+    }
+
+    /* ── Boot overlay ── */
+    .boot-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-family: var(--mono);
+      color: var(--cyan);
+      letter-spacing: .08em;
+      transition: opacity .35s ease;
+    }
+    .boot-overlay.fade { opacity: 0; pointer-events: none; }
+    .boot-overlay .boot-line {
+      font-size: .8rem;
+      margin: .15rem 0;
+      opacity: 0;
+      animation: boot-line-in .15s ease forwards;
+    }
+    .boot-overlay .boot-line.err { color: var(--red); }
+    .boot-overlay .boot-line.ok  { color: var(--green); }
+    .boot-overlay .boot-cursor {
+      display: inline-block;
+      width: 8px; height: 14px;
+      background: var(--cyan);
+      vertical-align: middle;
+      animation: boot-blink .55s steps(2) infinite;
+      margin-left: 4px;
+    }
+    @keyframes boot-line-in {
+      0%   { opacity: 0; transform: translateX(-4px); }
+      100% { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes boot-blink { 50% { opacity: 0; } }
+
+    /* ── One-shot glitch (applied briefly on status change) ── */
+    .glitch-once {
+      position: relative;
+      display: inline-block;
+    }
+    .glitch-once::before,
+    .glitch-once::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+    }
+    .glitch-once::before {
+      color: var(--cyan);
+      animation: glitch-once-1 .6s steps(8) 1;
+    }
+    .glitch-once::after {
+      color: var(--red);
+      animation: glitch-once-2 .6s steps(8) 1;
+    }
+    @keyframes glitch-once-1 {
+      0%   { clip: rect(8px,9999px,12px,0);  transform: translate(-2px,0); }
+      20%  { clip: rect(20px,9999px,28px,0); transform: translate(2px,0); }
+      40%  { clip: rect(0,9999px,4px,0);     transform: translate(-1px,1px); }
+      60%  { clip: rect(35px,9999px,44px,0); transform: translate(2px,-1px); }
+      80%  { clip: rect(15px,9999px,22px,0); transform: translate(-2px,0); }
+      100% { clip: rect(0,9999px,0,0);       transform: translate(0); }
+    }
+    @keyframes glitch-once-2 {
+      0%   { clip: rect(28px,9999px,36px,0); transform: translate(2px,0); }
+      25%  { clip: rect(5px,9999px,10px,0);  transform: translate(-2px,1px); }
+      50%  { clip: rect(40px,9999px,48px,0); transform: translate(1px,0); }
+      75%  { clip: rect(12px,9999px,18px,0); transform: translate(-1px,0); }
+      100% { clip: rect(0,9999px,0,0);       transform: translate(0); }
+    }
+
+    /* ── Card hover glitch tease + status-change splash ── */
+    .card { transition: transform .15s ease, box-shadow .25s ease, border-color .25s ease; }
+    .card:hover:not(.card-uninstalled) {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 32px rgba(124,58,237,.18);
+    }
+    .card.splash {
+      animation: card-splash .55s ease;
+    }
+    @keyframes card-splash {
+      0%   { box-shadow: 0 0 0 0 var(--cyan); }
+      40%  { box-shadow: 0 0 28px 4px var(--cyan); }
+      100% { box-shadow: 0 0 0 0 transparent; }
+    }
+    .card.running.splash { animation-name: card-splash-green; }
+    @keyframes card-splash-green {
+      0%   { box-shadow: 0 0 0 0 var(--green); }
+      40%  { box-shadow: 0 0 28px 4px var(--green); }
+      100% { box-shadow: 0 0 0 0 transparent; }
+    }
+
+    /* ── Per-card uptime counter ── */
+    .uptime {
+      display: none;
+      font-family: var(--mono);
+      font-size: .62rem;
+      color: var(--green);
+      letter-spacing: .08em;
+      padding: .12rem .35rem;
+      border: 1px solid rgba(16,185,129,.4);
+      border-radius: 2px;
+      background: rgba(16,185,129,.06);
+      margin-top: .15rem;
+    }
+    .uptime.visible { display: inline-block; }
+
+    /* ── ROGUE_MODE easter egg badge ── */
+    body.rogue-mode .nav-badge::after {
+      content: ' • ROGUE_MODE';
+      color: var(--red);
+      margin-left: .25rem;
+    }
+    body.rogue-mode {
+      animation: rogue-shake 6s ease infinite;
+    }
+    @keyframes rogue-shake {
+      0%,98%,100% { transform: translate(0); }
+      99%         { transform: translate(1px, -1px); }
+    }
+
+    /* ── Footer ── */
+    footer.dash-footer {
+      max-width: 1240px;
+      margin: 3rem auto 1.5rem;
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--border);
+      font-family: var(--mono);
+      font-size: .62rem;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      letter-spacing: .08em;
+      flex-wrap: wrap;
+      gap: .5rem;
+    }
+    footer.dash-footer .footer-tag { color: var(--acid); }
+    footer.dash-footer .footer-uptime b { color: var(--cyan); font-weight: normal; }
+
+    /* ── Responsive breakpoints ── */
+    /* Laptop (most 13" displays sit here) */
+    @media (max-width: 1100px) {
+      main { padding: 1.5rem 1rem; }
+      .page-header { flex-wrap: wrap; gap: 1rem; }
+      .page-header-right { flex-direction: row; gap: .75rem; }
+      .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    /* Tablet / narrow */
+    @media (max-width: 760px) {
+      nav { height: 82px; padding: 0 1rem; gap: 1rem; }
+      .nav-logo { gap: .85rem; }
+      .nav-logo img, .nav-logo-glyph { height: 52px; width: 52px; }
+      .nav-logo-glyph { font-size: 1.7rem; }
+      .nav-logo-text .line1 { font-size: 1rem; letter-spacing: .12em; }
+      .nav-logo-text .line2 { font-size: .68rem; }
+      .nav-badge { font-size: .68rem; padding: .35rem .65rem; }
+      .nav-session { font-size: .55rem; }
+      .page-eyebrow { font-size: .65rem; }
+      .page-title { font-size: 1.8rem; }
+      main { padding: 1rem .75rem; }
+      .page-header { flex-direction: column; align-items: flex-start; }
+      .page-header-right { width: 100%; justify-content: flex-start; }
+      .grid { grid-template-columns: 1fr; gap: 1rem; }
+      .empty-state { padding: 2.5rem 1rem 3rem; }
+      .empty-state-cmd { font-size: .85rem; padding: .65rem 1rem; }
+      .ticker-track { gap: 2rem; padding-left: 1rem; }
+      footer.dash-footer { flex-direction: column; align-items: flex-start; gap: .25rem; font-size: .58rem; }
+    }
+    /* Phone */
+    @media (max-width: 480px) {
+      nav { height: 64px; }
+      .nav-logo img, .nav-logo-glyph { height: 38px; width: 38px; }
+      .nav-logo-glyph { font-size: 1.2rem; }
+      .nav-logo-text .line1 { font-size: .8rem; }
+      .nav-logo-text .line2 { font-size: .58rem; }
+      .nav-badge { font-size: .58rem; padding: .25rem .5rem; }
+      .nav-session { display: none; }
+      .page-title { font-size: 1.4rem; }
+      .card { padding: .9rem; }
+      .card-title { font-size: 1rem; }
+    }
+    /* Respect reduced-motion for the loud effects, but leave the FEED ticker
+       running — it's slow, predictable, and conveys real-time system state
+       that we want visible regardless of motion preferences. */
+    @media (prefers-reduced-motion: reduce) {
+      .glitch::before, .glitch::after { animation: none; }
+      .spinner { animation: none; }
+      .progress-bar > span.active { animation: none; }
+      .boot-overlay .boot-line { animation: none; opacity: 1; }
+      body.rogue-mode { animation: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Boot overlay (removed by JS after ~1.4s) -->
+<div class="boot-overlay" id="boot-overlay">
+  <div class="boot-line">// HEXXED BITHEADZ // AI SECURITY LABS // v1.0</div>
+  <div class="boot-line" style="animation-delay: .15s">[ OK ] mount /dev/cyberdeck</div>
+  <div class="boot-line" style="animation-delay: .3s">[ OK ] initialize lab registry</div>
+  <div class="boot-line" style="animation-delay: .45s">[ OK ] start docker bridge</div>
+  <div class="boot-line ok" style="animation-delay: .6s">[ READY ] dashboard online<span class="boot-cursor"></span></div>
+</div>
+
+<div class="crt-vignette"></div>
+
+<nav>
+  <div class="nav-corner"></div>
+  <a class="nav-logo" href="/">
+    <img src="/static/branding/logo.png" alt="" width="30" height="30"
+         onerror="this.outerHTML='<span class=&quot;nav-logo-glyph&quot;>⬢</span>'">
+    <div class="nav-logo-text">
+      <span class="line1">AI Security Labs</span>
+      <span class="line2">by Hexxed BitHeadz</span>
+    </div>
+  </a>
+  <div class="nav-spacer"></div>
+  <div class="nav-info">
+    <span class="nav-badge" id="nav-active-lab">// NO_LAB_ACTIVE</span>
+    <span class="nav-session">// SESSION <b id="nav-session-uptime">00:00:00</b></span>
+  </div>
+</nav>
+
+<!-- Ticker (content populated by JS so it reflects real lab state) -->
+<div class="ticker-wrap">
+  <span class="ticker-label">FEED</span>
+  <div class="ticker-scroll">
+  <div class="ticker-track" id="ticker">
+  </div>
+  </div>
+</div>
+
+<div id="alert-bar"></div>
+<div id="disconnected-banner">backend unreachable — UI may be stale. Check the terminal where you ran ./run.sh.</div>
+
+<main>
+  <div class="page-header">
+    <div class="page-header-left">
+      <div class="page-eyebrow">lab_select // choose your module</div>
+      <div class="page-title">
+        <span class="glitch" data-text="LAB">LAB</span>
+        <span class="accent"> DASHBOARD</span>
+      </div>
+      <div class="page-sub">// {% if not any_released %}no labs released yet — check back when the first blog post lands{% elif installed_count == 0 %}{{ labs|length }} lab{% if labs|length != 1 %}s{% endif %} available — install one to begin{% else %}{{ installed_count }} of {{ labs|length }} labs installed &nbsp;&mdash;&nbsp; one lab active at a time{% endif %}</div>
+    </div>
+    <div class="page-header-right">
+      <div class="sys-stat">INSTALLED <span class="val">{{ '%02d' % installed_count }}</span> / {{ '%02d' % labs|length }}</div>
+      <div class="sys-stat" id="active-count-stat">ACTIVE <span class="val">00</span></div>
+    </div>
+  </div>
+
+  {% if not any_released %}
+  <div class="empty-state">
+    <div class="empty-state-icon">[ ] [ ] [ ]</div>
+    <div class="empty-state-title">NO LABS RELEASED YET</div>
+    <div class="empty-state-body">
+      No lab folders found in this repository. Pull the latest from the repo or run <code>./install-lab.sh NN</code> to register one.
+    </div>
+  </div>
+  {% else %}
+  <div class="grid">
+    {% for lab in labs %}
+    <div class="card {% if not lab.installed %}card-uninstalled{% endif %}" id="card-{{ lab.id }}" data-id="{{ lab.id }}" data-port="{{ lab.port }}">
+      <div class="card-bar"></div>
+
+      <div class="card-top">
+        <div>
+          <div class="lab-id">// {{ lab.name }} &nbsp;&bull;&nbsp; {{ lab.topic | upper }}</div>
+          <div class="card-title" data-text="{{ lab.title | upper }}">{{ lab.title | upper }}</div>
+        </div>
+        <div class="status-wrap">
+          {% if lab.installed %}
+          <div class="status-dot" id="dot-{{ lab.id }}"></div>
+          <div class="status-code" id="status-code-{{ lab.id }}">IDLE</div>
+          <span class="uptime" id="uptime-{{ lab.id }}">UP 00:00:00</span>
+          {% else %}
+          <div class="status-available">AVAILABLE</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="tags">
+        <span class="tag tag-{{ lab.difficulty | lower }}">{{ lab.difficulty }}</span>
+        <span class="tag tag-topic">{{ lab.topic }}</span>
+      </div>
+
+      <p class="card-desc">{{ lab.description }}</p>
+
+      {% if lab.installed %}
+      <div class="progress" id="progress-{{ lab.id }}">
+        <div class="progress-head">
+          <span class="progress-label" id="progress-label-{{ lab.id }}">Working...</span>
+          <span class="progress-step" id="progress-step-{{ lab.id }}"></span>
+        </div>
+        <div class="progress-detail" id="progress-detail-{{ lab.id }}"></div>
+        <div class="progress-bar" id="progress-bar-{{ lab.id }}"></div>
+        <div class="live-log" id="live-log-{{ lab.id }}">
+          <div class="live-log-head">// LIVE OUTPUT</div>
+          <pre class="live-log-body" id="live-log-body-{{ lab.id }}"></pre>
+        </div>
+      </div>
+      <div class="fault-panel" id="fault-panel-{{ lab.id }}">
+        <div class="fault-title">// FAULT_DETAIL</div>
+        <div class="fault-message" id="fault-message-{{ lab.id }}"></div>
+        <div class="fault-actions">
+          <button class="fault-log-btn" id="fault-log-btn-compose-{{ lab.id }}"
+                  onclick="viewLog('{{ lab.id }}', 'install')" style="display:none">[ COMPOSE LOG ]</button>
+          <button class="fault-log-btn" id="fault-log-btn-install-{{ lab.id }}"
+                  onclick="viewLog('{{ lab.id }}', 'dashboard-install')" style="display:none">[ INSTALL LOG ]</button>
+          <button class="fault-log-btn" id="fault-log-btn-start-{{ lab.id }}"
+                  onclick="viewLog('{{ lab.id }}', 'dashboard-start')" style="display:none">[ START LOG ]</button>
+        </div>
+        <pre class="fault-log" id="fault-log-{{ lab.id }}"></pre>
+      </div>
+      {% endif %}
+
+      <div class="card-footer">
+        {% if lab.installed %}
+        <button class="btn btn-start"  id="btn-start-{{ lab.id }}"  onclick="startLab('{{ lab.id }}')">[ LAUNCH ]</button>
+        <button class="btn btn-stop"   id="btn-stop-{{ lab.id }}"   onclick="stopLab('{{ lab.id }}')"  style="display:none">[ TERMINATE ]</button>
+        <button class="btn btn-open"   id="btn-open-{{ lab.id }}"   style="display:none"
+                onclick="window.open('http://'+window.location.hostname+':{{ lab.port }}','_blank')">[ ENTER ]</button>
+        <button class="btn btn-clear"  id="btn-clear-{{ lab.id }}"  onclick="clearError('{{ lab.id }}')" style="display:none">[ DISMISS ]</button>
+        {% else %}
+        <button class="btn btn-install" id="btn-install-{{ lab.id }}" onclick="installLab('{{ lab.id }}')">[ INSTALL ]</button>
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+</main>
+
+<footer class="dash-footer">
+  <span><span class="footer-tag">//</span> HEXXED_BITHEADZ &nbsp;&middot;&nbsp; AI_SECURITY_LABS &nbsp;&middot;&nbsp; v1.0</span>
+  <span class="footer-uptime">// SYS_UPTIME <b id="sys-uptime">00:00:00</b></span>
+</footer>
+
+
+<script>
+const LABS = {{ labs | tojson }};
+window.HEBI_LITE_MODE = {{ hebi_lite | tojson }};
+let _status = {};
+const _ready     = {};   // lab_id -> true once HTTP 200 confirmed
+const _timers    = {};   // lab_id -> setInterval handle for readiness polling
+
+async function checkReady(id) {
+  try {
+    const res = await fetch('/api/labs/' + id + '/ready');
+    if (!res.ok) return;
+    const { ready } = await res.json();
+    if (ready && !_ready[id]) {
+      _ready[id] = true;
+      clearInterval(_timers[id]);
+      delete _timers[id];
+      const btnO = document.getElementById('btn-open-' + id);
+      if (btnO) {
+        btnO.disabled = false;
+        btnO.innerHTML = '[ ENTER ]';
+      }
+    }
+  } catch (_) {}
+}
+
+function startReadyPoll(id) {
+  if (_ready[id] || _timers[id]) return;
+  checkReady(id);
+  _timers[id] = setInterval(() => checkReady(id), 2000);
+}
+
+function stopReadyPoll(id) {
+  clearInterval(_timers[id]);
+  delete _timers[id];
+  delete _ready[id];
+}
+
+
+function applyStatus(id, status) {
+  const card  = document.getElementById('card-'        + id);
+  const dot   = document.getElementById('dot-'         + id);
+  const code  = document.getElementById('status-code-' + id);
+  const btnS  = document.getElementById('btn-start-'   + id);
+  const btnSt = document.getElementById('btn-stop-'    + id);
+  const btnO  = document.getElementById('btn-open-'    + id);
+  const btnC  = document.getElementById('btn-clear-'   + id);
+
+  const activeStates = ['running','starting','stopping','installing','error'];
+  card.className = 'card ' + (activeStates.includes(status) ? status : '');
+  dot.className  = 'status-dot ' + status;
+  code.className = 'status-code ' + status;
+
+  const labels = { stopped:'IDLE', running:'ONLINE', starting:'BOOTING', stopping:'SHUTDOWN', installing:'INSTALLING', error:'FAULT' };
+  code.textContent = labels[status] || status.toUpperCase();
+
+  const isRunning    = status === 'running';
+  const isInstalling = status === 'installing';
+  const isTransit    = status === 'starting' || status === 'stopping';
+  const isError      = status === 'error';
+  const isStopped    = status === 'stopped';
+
+  // Clear ready state whenever the lab leaves "running"
+  if (!isRunning) stopReadyPoll(id);
+
+  // LAUNCH visible when stopped OR installing (disabled+spinner during install)
+  btnS.style.display  = (isStopped || isInstalling) ? '' : 'none';
+  // TERMINATE only during run/transit — not during install (no clean way to cancel)
+  btnSt.style.display = (isRunning || isTransit) ? '' : 'none';
+  btnO.style.display  = isRunning ? '' : 'none';
+  btnC.style.display  = isError   ? '' : 'none';
+
+  if (isStopped) {
+    btnS.innerHTML = '[ LAUNCH ]';
+    btnS.disabled  = false;
+  } else if (isInstalling) {
+    btnS.innerHTML = '<span class="spinner"></span>[ INSTALLING... ]';
+    btnS.disabled  = true;
+  }
+
+  if (status === 'starting') {
+    btnSt.innerHTML = '<span class="spinner"></span>[ BOOTING... ]';
+    btnSt.disabled  = true;
+  } else if (status === 'stopping') {
+    btnSt.innerHTML = '<span class="spinner"></span>[ KILLING... ]';
+    btnSt.disabled  = true;
+  } else {
+    btnSt.innerHTML = '[ TERMINATE ]';
+    btnSt.disabled  = false;
+  }
+
+  if (isRunning) {
+    // If the progress card is currently visible the install/start script is
+    // still streaming progress (e.g. phase-3 model pulls). Keep ENTER
+    // disabled until the script clears its .dashboard-progress file —
+    // otherwise the user clicks through to a WebUI whose model dropdown is
+    // missing the still-downloading models, and any chat against an
+    // in-flight model 400s. The poll() body separately sets [FINALIZING];
+    // we just need to not OVERRIDE it back to [ENTER] here.
+    const progressBox = document.getElementById('progress-' + id);
+    const hasActiveProgress = !!(progressBox && progressBox.classList.contains('visible'));
+    if (_ready[id] && !hasActiveProgress) {
+      btnO.disabled = false;
+      btnO.innerHTML = '[ ENTER ]';
+    } else if (hasActiveProgress) {
+      btnO.disabled = true;
+      btnO.innerHTML = '<span class="spinner"></span>[ FINALIZING... ]';
+      startReadyPoll(id);
+    } else {
+      btnO.disabled = true;
+      btnO.innerHTML = '<span class="spinner"></span>[ PROBING... ]';
+      startReadyPoll(id);
+    }
+  }
+}
+
+
+function updateGlobalUI(statusMap) {
+  const alert = document.getElementById('alert-bar');
+  const navBadge = document.getElementById('nav-active-lab');
+  const countStat = document.getElementById('active-count-stat');
+
+  const active = LABS.find(l => statusMap[l.id] === 'running' || statusMap[l.id] === 'starting');
+  if (active) {
+    const s = statusMap[active.id];
+    alert.textContent = active.name + ' [' + active.title.toUpperCase() + '] is ' + (s === 'starting' ? 'BOOTING' : 'ACTIVE') + ' — terminate before launching another module';
+    alert.classList.add('visible');
+    navBadge.textContent = '// ' + active.id.toUpperCase() + '_' + (s === 'starting' ? 'BOOTING' : 'ACTIVE');
+    countStat.innerHTML = 'ACTIVE <span class="val">01</span>';
+  } else {
+    alert.classList.remove('visible');
+    navBadge.textContent = '// NO_LAB_ACTIVE';
+    countStat.innerHTML = 'ACTIVE <span class="val">00</span>';
+  }
+}
+
+function applyProgress(id, progress) {
+  const box = document.getElementById('progress-' + id);
+  if (!box) return;
+  if (!progress) {
+    box.classList.remove('visible');
+    return;
+  }
+  box.classList.add('visible');
+  const label  = document.getElementById('progress-label-'  + id);
+  const step   = document.getElementById('progress-step-'   + id);
+  const detail = document.getElementById('progress-detail-' + id);
+  const bar    = document.getElementById('progress-bar-'    + id);
+  if (label)  label.textContent  = progress.label || 'Working...';
+  if (step)   step.textContent   = 'Step ' + (progress.step || 0) + ' / ' + (progress.total_steps || 0);
+  if (detail) detail.textContent = progress.detail || '';
+  if (bar) {
+    const total = progress.total_steps || 0;
+    const cur   = progress.step || 0;
+    if (bar.children.length !== total) {
+      bar.innerHTML = '';
+      for (let i = 0; i < total; i++) bar.appendChild(document.createElement('span'));
+    }
+    Array.from(bar.children).forEach((seg, i) => {
+      seg.classList.remove('done', 'active');
+      if (i + 1 < cur)      seg.classList.add('done');
+      else if (i + 1 === cur) seg.classList.add('active');
+    });
+  }
+}
+
+// Show the live install.log tail in a small terminal pane under the
+// progress bar. Auto-scrolls to bottom only when the user was already
+// at the bottom — preserves their scroll position if they're reading
+// earlier output.
+function applyLiveLog(id, content) {
+  const wrap = document.getElementById('live-log-' + id);
+  const body = document.getElementById('live-log-body-' + id);
+  if (!wrap || !body) return;
+  if (!content) {
+    wrap.classList.remove('visible');
+    body.textContent = '';
+    return;
+  }
+  wrap.classList.add('visible');
+  // Preserve scroll position if user scrolled up; auto-scroll only if
+  // they were within 8px of the bottom (i.e. following the live feed).
+  const wasAtBottom = (body.scrollHeight - body.scrollTop - body.clientHeight) < 8;
+  if (body.textContent !== content) {
+    body.textContent = content;
+    if (wasAtBottom) body.scrollTop = body.scrollHeight;
+  }
+}
+
+// Consecutive poll-failure counter. After _POLL_FAILURE_THRESHOLD failures
+// (~9s at the 3s poll interval), we show the DISCONNECTED banner and freeze
+// the per-card UP counter so the UI stops lying about lab state.
+let _pollFailures = 0;
+const _POLL_FAILURE_THRESHOLD = 3;
+function isDisconnected() { return _pollFailures >= _POLL_FAILURE_THRESHOLD; }
+function setDisconnected(disconnected) {
+  const banner = document.getElementById('disconnected-banner');
+  if (!banner) return;
+  if (disconnected) banner.classList.add('visible');
+  else banner.classList.remove('visible');
+}
+
+async function poll() {
+  try {
+    const res = await fetch('/api/status');
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    const statusMap = {};
+    for (const [id, info] of Object.entries(data)) {
+      statusMap[id] = info.status;
+      applyProgress(id, info.progress);
+      applyLiveLog(id, info.live_log);
+      applyFault(id, info);
+      // If start.sh is still working (progress block visible), don't let the
+      // user click ENTER yet — model downloads in the dropdown won't all be
+      // available until the file disappears.
+      if (info.progress && info.status === 'running') {
+        const btnO = document.getElementById('btn-open-' + id);
+        if (btnO && btnO.style.display !== 'none') {
+          btnO.disabled = true;
+          btnO.innerHTML = '<span class="spinner"></span>[ FINALIZING... ]';
+        }
+      }
+    }
+    _status = statusMap;
+    for (const [id, status] of Object.entries(statusMap)) applyStatus(id, status);
+    updateGlobalUI(statusMap);
+    _pollFailures = 0;
+    setDisconnected(false);
+  } catch (_) {
+    _pollFailures++;
+    if (isDisconnected()) setDisconnected(true);
+  }
+}
+
+async function installLab(id) {
+  const btn = document.getElementById('btn-install-' + id);
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>[ INSTALLING... ]';
+  try {
+    const res = await fetch('/api/labs/' + id + '/install', { method: 'POST' });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      alert(err.detail || 'Install failed.');
+      btn.disabled = false;
+      btn.innerHTML = '[ INSTALL ]';
+      return;
+    }
+    // Reload so the tile re-renders with [ LAUNCH ] and the IDLE status indicator
+    window.location.reload();
+  } catch (e) {
+    alert('Request failed: ' + e);
+    btn.disabled = false;
+    btn.innerHTML = '[ INSTALL ]';
+  }
+}
+
+async function startLab(id) {
+  const btn = document.getElementById('btn-start-' + id);
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>[ LAUNCHING... ]';
+  try {
+    const res = await fetch('/api/labs/' + id + '/start', { method: 'POST' });
+    if (!res.ok) {
+      const err = await res.json();
+      alert(err.detail || 'Launch failed.');
+      btn.disabled = false;
+      btn.innerHTML = '[ LAUNCH ]';
+      return;
+    }
+    applyStatus(id, 'starting');
+  } catch (e) {
+    alert('Request failed: ' + e);
+    btn.disabled = false;
+    btn.innerHTML = '[ LAUNCH ]';
+  }
+}
+
+async function stopLab(id) {
+  const current = _status[id];
+  if (current === 'starting' || current === 'stopping') return;
+  applyStatus(id, 'stopping');
+  try { await fetch('/api/labs/' + id + '/stop', { method: 'POST' }); } catch (_) {}
+}
+
+async function clearError(id) {
+  await fetch('/api/labs/' + id + '/clear-error', { method: 'POST' });
+  // Hide the fault panel + the log expansion immediately so the UI flips
+  // back to "ready to retry" without waiting for the next poll.
+  const panel = document.getElementById('fault-panel-' + id);
+  if (panel) panel.classList.remove('visible');
+  const logEl = document.getElementById('fault-log-' + id);
+  if (logEl) {
+    logEl.classList.remove('visible');
+    logEl.textContent = '';
+  }
+  _currentLogShown[id] = null;
+  applyStatus(id, 'stopped');
+}
+
+// Render the fault panel for a lab. Called each poll. When status isn't
+// "error", hide the panel. When it IS "error", show the captured error
+// message and reveal whichever VIEW-LOG buttons have a backing file.
+// install.log carries the docker compose output — usually the actual cause.
+// The dashboard-* logs carry the script's own wrapped stdout.
+function applyFault(id, info) {
+  const panel = document.getElementById('fault-panel-' + id);
+  if (!panel) return;
+  if (info.status !== 'error') {
+    panel.classList.remove('visible');
+    return;
+  }
+  panel.classList.add('visible');
+  const msgEl = document.getElementById('fault-message-' + id);
+  if (msgEl) {
+    msgEl.textContent = info.error_message
+      || 'No detailed error captured. Check the log buttons below.';
+  }
+  const setBtn = (suffix, visible) => {
+    const b = document.getElementById('fault-log-btn-' + suffix + '-' + id);
+    if (b) b.style.display = visible ? '' : 'none';
+  };
+  setBtn('compose', !!info.has_compose_log);
+  setBtn('install', !!info.has_install_log);
+  setBtn('start',   !!info.has_start_log);
+}
+
+// Track which log each lab's pane is currently showing so we can toggle
+// off on repeat-click and swap content on cross-click without flicker.
+const _currentLogShown = {};
+
+async function viewLog(id, name) {
+  const logEl = document.getElementById('fault-log-' + id);
+  if (!logEl) return;
+  // Repeat-click on the same source toggles the pane closed
+  if (logEl.classList.contains('visible') && _currentLogShown[id] === name) {
+    logEl.classList.remove('visible');
+    _currentLogShown[id] = null;
+    return;
+  }
+  try {
+    const res = await fetch('/api/labs/' + id + '/log/' + encodeURIComponent(name));
+    if (!res.ok) {
+      logEl.textContent = 'Could not fetch log (HTTP ' + res.status + ').';
+    } else {
+      const data = await res.json();
+      logEl.textContent = (data.log || '(empty log)') + '\n\n[file: ' + (data.log_file || 'unknown') + ']';
+    }
+    logEl.classList.add('visible');
+    _currentLogShown[id] = name;
+    // Scroll to bottom so the user sees the latest line first
+    logEl.scrollTop = logEl.scrollHeight;
+  } catch (e) {
+    logEl.textContent = 'Request failed: ' + e;
+    logEl.classList.add('visible');
+  }
+}
+
+poll();
+setInterval(poll, 3000);
+
+// ────────────────────────────────────────────────────────────────────
+// Polish layer: boot animation, dynamic ticker, uptime, splash, Konami
+// ────────────────────────────────────────────────────────────────────
+
+// 1. Fade out the boot overlay shortly after page is interactive.
+(function bootFade() {
+  const ov = document.getElementById('boot-overlay');
+  if (!ov) return;
+  // Honor reduced-motion: skip the show entirely
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    ov.style.display = 'none';
+    return;
+  }
+  setTimeout(() => {
+    ov.classList.add('fade');
+    setTimeout(() => ov.remove(), 400);
+  }, 1400);
+})();
+
+// 2. Dynamic ticker — built from the page's labs + a few system bits, refreshed each poll.
+const SESSION_START = Date.now();
+function fmtClock(seconds) {
+  const h = String(Math.floor(seconds / 3600)).padStart(2, '0');
+  const m = String(Math.floor((seconds % 3600) / 60)).padStart(2, '0');
+  const s = String(seconds % 60).padStart(2, '0');
+  return `${h}:${m}:${s}`;
+}
+function labSlug(title) {
+  return (title || '').toUpperCase().replace(/[^A-Z0-9]+/g, '_').replace(/^_|_$/g, '');
+}
+function refreshTicker(statusMap) {
+  const t = document.getElementById('ticker');
+  if (!t) return;
+  const items = [];
+  let installedCount = 0;
+  let activeCount = 0;
+  LABS.forEach(l => {
+    const name = labSlug(l.title);
+    if (!l.installed) {
+      items.push(`${name} &mdash; <b>AVAILABLE</b>`);
+      return;
+    }
+    installedCount++;
+    const s = statusMap[l.id] || 'stopped';
+    if (s === 'running')     { items.push(`${name} &mdash; <b>ACTIVE</b>`); activeCount++; }
+    else if (s === 'starting')   items.push(`${name} &mdash; <b>BOOTING</b>`);
+    else if (s === 'installing') items.push(`${name} &mdash; <b>INSTALLING</b>`);
+    else if (s === 'stopping')   items.push(`${name} &mdash; <b>SHUTDOWN</b>`);
+    else if (s === 'error')      items.push(`${name} &mdash; <b>FAULT</b>`);
+    else                         items.push(`${name} &mdash; <b>IDLE</b>`);
+  });
+  items.push(`INSTALLED &mdash; <b>${installedCount} of ${LABS.length}</b>`);
+  items.push(`ACTIVE &mdash; <b>${activeCount}</b>`);
+  items.push(`MODE &mdash; <b>${window.HEBI_LITE_MODE ? 'LITE' : 'STANDARD'}</b>`);
+  items.push(`HOST &mdash; <b>${window.location.hostname.toUpperCase()}</b>`);
+  items.push(`HEXXED_BITHEADZ &mdash; <b>AI_SECURITY_LABS v1.0</b>`);
+  items.push(`&gt;&gt; PROCEED_WITH_INTENT &lt;&lt;`);
+  // Repeat 3× so the track is comfortably wider than any reasonable viewport,
+  // making the translateX(-50%) loop look like continuous scroll.
+  const oneSet = items.map(x => `<span>${x}</span>`).join('');
+  const html = oneSet + oneSet + oneSet;
+  const sig = html.length + ':' + activeCount + ':' + installedCount;
+  // Only re-render when content actually changes — preserves CSS animation state
+  if (t.dataset.sig !== sig) {
+    t.innerHTML = html;
+    t.dataset.sig = sig;
+  }
+}
+
+// 3. System uptime in the footer + nav session counter
+function tickSystemUptime() {
+  const clock = fmtClock(Math.floor((Date.now() - SESSION_START) / 1000));
+  const sys = document.getElementById('sys-uptime');
+  if (sys) sys.textContent = clock;
+  const nav = document.getElementById('nav-session-uptime');
+  if (nav) nav.textContent = clock;
+}
+setInterval(tickSystemUptime, 1000);
+tickSystemUptime();
+
+// 4. Per-card uptime counter
+const _runStarted = {};
+function tickCardUptime() {
+  // Freeze the counter when polling is broken — otherwise the UI keeps
+  // claiming "UP +1s" every second even after the backend died.
+  if (isDisconnected()) return;
+  for (const id of Object.keys(_status)) {
+    const el = document.getElementById('uptime-' + id);
+    if (!el) continue;
+    if (_status[id] === 'running' && _runStarted[id]) {
+      const s = Math.floor((Date.now() - _runStarted[id]) / 1000);
+      el.textContent = 'UP ' + fmtClock(s);
+      el.classList.add('visible');
+    } else {
+      el.classList.remove('visible');
+    }
+  }
+}
+setInterval(tickCardUptime, 1000);
+
+// 5. Status-change splash + one-shot glitch on the card title.
+// Monkey-patch applyStatus so the effect fires SYNCHRONOUSLY the moment a
+// status changes — whether from a user click (startLab/stopLab call
+// applyStatus directly) or from the 3-second poll loop picking up a backend
+// transition. This catches the moment the user is actually looking at the tile.
+const _appliedStatus = {};
+const _origApplyStatus = window.applyStatus;
+window.applyStatus = function (id, status) {
+  const prev = _appliedStatus[id];
+  _origApplyStatus(id, status);
+  if (prev !== undefined && prev !== status) {
+    const card  = document.getElementById('card-' + id);
+    const title = card && card.querySelector('.card-title');
+    // Track when the lab first goes running, for uptime counter
+    if (status === 'running' && prev !== 'running') _runStarted[id] = Date.now();
+    if (status !== 'running') delete _runStarted[id];
+    if (card) {
+      card.classList.remove('splash');
+      void card.offsetWidth;
+      card.classList.add('splash');
+      setTimeout(() => card.classList.remove('splash'), 600);
+    }
+    if (title) {
+      title.classList.remove('glitch-once');
+      void title.offsetWidth;
+      title.classList.add('glitch-once');
+      setTimeout(() => title.classList.remove('glitch-once'), 650);
+    }
+  }
+  _appliedStatus[id] = status;
+};
+
+// Extend the poll loop to also refresh the ticker on each tick.
+(function () {
+  const orig = poll;
+  window.poll = async function () {
+    await orig();
+    refreshTicker(_status);
+  };
+})();
+// Render the ticker IMMEDIATELY at page load so the FEED bar isn't blank
+// while the first /api/status round-trip is in flight.
+refreshTicker(_status || {});
+
+// 6. Konami code easter egg → ROGUE_MODE
+(function konami() {
+  const seq = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+  let i = 0;
+  document.addEventListener('keydown', (e) => {
+    const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+    if (k === seq[i]) {
+      i++;
+      if (i === seq.length) {
+        document.body.classList.toggle('rogue-mode');
+        const bar = document.getElementById('alert-bar');
+        if (bar) {
+          bar.textContent = document.body.classList.contains('rogue-mode')
+            ? '// ROGUE_MODE engaged — proceed with intent'
+            : '// ROGUE_MODE disengaged';
+          bar.classList.add('visible');
+          setTimeout(() => bar.classList.remove('visible'), 2500);
+        }
+        i = 0;
+      }
+    } else {
+      i = (k === seq[0]) ? 1 : 0;
+    }
+  });
+})();
+</script>
+</body>
+</html>
