@@ -50,8 +50,15 @@ if [[ "${HEBI_LITE:-0}" == "1" ]]; then
   OLLAMA_MODELS="tinyllama:1.1b,llama3.2:1b"
   progress_detail "LITE mode — only tinyllama:1.1b, llama3.2:1b"
 fi
-mkdir -p logs data/ollama data/chroma 2>/dev/null || true
-chmod 777 logs data data/ollama data/chroma 2>/dev/null || true
+mkdir -p logs data/chroma 2>/dev/null || true
+chmod 777 logs data data/chroma 2>/dev/null || true
+
+# Ensure the shared ollama model volume exists. setup.sh creates it for
+# users who follow the documented setup path; this is the lazy fallback
+# so install.sh works for users who skipped setup.sh. Idempotent.
+if ! docker volume inspect hebi-ollama-models >/dev/null 2>&1; then
+  docker volume create hebi-ollama-models >/dev/null
+fi
 
 # 2. Bring ollama up (and chroma/webui — webui is the python helper for byte-progress pulls).
 # --build forces a rebuild of webui/chroma images so code changes pulled via

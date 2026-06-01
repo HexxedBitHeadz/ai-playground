@@ -97,6 +97,32 @@ services:
       interval: 15s
       timeout: 5s
       retries: 5
+
+  # If this lab needs an LLM, uncomment the ollama service below. It uses
+  # the shared 'hebi-ollama-models' external volume so model weights pulled
+  # by LAB 01 are reused here — no re-download. Also uncomment the top-
+  # level volumes block at the bottom of this file.
+  #
+  # ollama:
+  #   image: ollama/ollama:latest
+  #   container_name: ollama
+  #   restart: unless-stopped
+  #   ports:
+  #     - "11434:11434"
+  #   volumes:
+  #     - hebi-ollama-models:/root/.ollama
+  #   environment:
+  #     OLLAMA_HOST: "0.0.0.0:11434"
+  #   command: ["serve"]
+
+# Top-level volume declaration (uncomment if you uncommented ollama above).
+# 'external: true' = setup.sh / install.sh creates this volume; compose
+# never deletes it. Sharing the volume name across labs is what makes
+# model weights survive lab teardown AND avoid re-downloading per lab.
+#
+# volumes:
+#   hebi-ollama-models:
+#     external: true
 EOF
 
 cat > "$LAB_DIR/docker/webui/Dockerfile" <<'EOF'

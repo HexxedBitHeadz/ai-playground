@@ -21,4 +21,24 @@ for example in */.env.example; do
 done
 
 echo ""
+
+# Create the shared ollama-models named Docker volume. Every lab mounts
+# this volume into its ollama container, so model weights pulled by one
+# lab are reused by every other lab — pull the ~38 GB once, use forever.
+# Idempotent: docker volume create no-ops if the volume already exists.
+if command -v docker >/dev/null 2>&1; then
+  if docker volume inspect hebi-ollama-models >/dev/null 2>&1; then
+    echo "  [skip] hebi-ollama-models volume already exists"
+  else
+    if docker volume create hebi-ollama-models >/dev/null 2>&1; then
+      echo "  [created] hebi-ollama-models volume (shared across labs)"
+    else
+      echo "  [warn] couldn't create hebi-ollama-models volume — install.sh will retry"
+    fi
+  fi
+else
+  echo "  [warn] docker not found yet — install.sh will create the volume when you launch a lab"
+fi
+
+echo ""
 echo "Done. Edit any .env files as needed before launching labs."

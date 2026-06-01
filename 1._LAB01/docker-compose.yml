@@ -6,7 +6,11 @@ services:
     ports:
       - "${OLLAMA_PORT}:11434"
     volumes:
-      - ${OLLAMA_DATA_DIR}:/root/.ollama
+      # Shared across all labs. setup.sh creates the volume; install.sh
+      # creates it lazily if setup.sh wasn't run. The 'external: true'
+      # declaration below means `docker compose down -v` will NOT delete
+      # this volume — your model weights survive teardown.
+      - hebi-ollama-models:/root/.ollama
     environment:
       OLLAMA_HOST: "0.0.0.0:11434"
     command: ["serve"]
@@ -69,3 +73,13 @@ services:
       interval: 15s
       timeout: 5s
       retries: 5
+
+
+# Top-level named volumes. 'external: true' means Docker won't create or
+# destroy this volume as part of compose lifecycle — it must already
+# exist (setup.sh / install.sh create it). The point: model weights
+# persist across every lab teardown AND are shared across every lab
+# that mounts the same name.
+volumes:
+  hebi-ollama-models:
+    external: true

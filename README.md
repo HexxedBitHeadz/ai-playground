@@ -77,7 +77,7 @@ You don't need PromptSlinger to use the labs — every lab has a WebUI you can a
 | LAB01 stuck "INSTALLING" for >30 min | First pull is large; check `1._LAB01/logs/install.log` or restart with `./run.sh --lite` for a ~2 GB subset |
 | Lab fails with "no NVIDIA device" | Shouldn't happen — CPU is the default. If it does, ensure you're not manually adding `-f docker-compose.gpu.yml` |
 | Port already in use | `fuser -k 9000/tcp` (or replace 9000 with the offending port) |
-| Models took up too much disk | `docker exec ollama ollama rm <model>` or wipe `1._LAB01/data/ollama/` |
+| Models took up too much disk | `docker exec ollama ollama rm <model>` to drop one, or `docker volume rm hebi-ollama-models` to nuke every model across every lab (irreversible — you'll re-download next install) |
 
 ---
 
