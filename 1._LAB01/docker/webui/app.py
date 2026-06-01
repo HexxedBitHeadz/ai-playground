@@ -247,7 +247,7 @@ _GUIDE_HTML = """
 .g-reflect-q{font-size:.77rem;color:var(--text);font-style:italic;padding:.28rem .5rem .28rem .65rem;border-left:2px solid var(--accent);margin-bottom:.3rem;line-height:1.5;}
 </style>
 
-<h1>LAB 01 — Prompt Injection</h1>
+<h1>LAB 01 — Playground Tour</h1>
 <p class="g-intro">
   Prompt injection exploits a fundamental property of LLMs: instructions and
   data arrive through the same input stream. By embedding adversarial commands

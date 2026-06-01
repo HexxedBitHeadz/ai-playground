@@ -1,4 +1,4 @@
-# Lab 01 — Prompt Injection & LLM Probing
+# Lab 01 — Playground Tour
 
 Explore how local LLMs respond to direct and indirect injection attempts. You'll baseline normal model behavior across model sizes, extract credentials from `hebi-codegen` via code-completion attacks, run an automated scanner, and compare verdicts side by side.
 
