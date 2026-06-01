@@ -32,55 +32,7 @@ cd service-dashboard
 
 Smaller models mean some attack techniques work less reliably, but the dashboard, the workflow, and most prompt-injection demos all function. Drop the flag later to pull the full set.
 
-### Windows + WSL2 quick reference
-
-If you're driving the lab box from Windows over WSL2:
-
-```bash
-wsl --set-default Ubuntu-24.04           # pick the right WSL distro (PowerShell)
-wsl -d Ubuntu-24.04                      # drop into it
-cd ~/hebi-ai-playground/service-dashboard
-./run.sh
-```
-
-Or hop onto the lab box from another machine on the LAN:
-
-```bash
-ssh <user>@<lab-host>
-cd ~/hebi-ai-playground/service-dashboard && ./run.sh
-```
-
 ---
-
-## Requirements
-
-| | Required | Recommended |
-|---|---|---|
-| **OS** | Linux or WSL2 | Ubuntu 22.04+ / WSL2 |
-| **Docker** | Yes — `run.sh` offers to install Docker Engine for you if missing | Docker Engine inside WSL (no Docker Desktop required) |
-| **Python** | 3.9+ | 3.10+ |
-| **GPU** | None (CPU mode works) | NVIDIA with 16 GB+ VRAM |
-| **Disk** | 5 GB free for lite mode, 40 GB for the full pull | 80 GB if you plan to add more labs later |
-| **RAM** | 16 GB | 32 GB |
-
-> **macOS / Windows native:** not currently supported. The lab scripts use Linux conventions (bash, systemd ollama). On Windows, use WSL2. macOS support is a known gap.
-
----
-
-## How the repo is organized
-
-```
-hebi-ai-playground/
-├── service-dashboard/    # Web UI for starting/stopping labs (http://localhost:9000)
-├── 1._LAB01/             # Prompt Injection — builds hebi-codegen, pulls base models
-├── shared/               # Branding + templates shared across labs
-├── setup.sh              # First-time setup — creates .env files
-├── install-lab.sh        # Register a lab with the dashboard
-├── uninstall-lab.sh      # Remove a lab from the dashboard
-├── new-lab.sh            # Scaffold a new lab folder for contributions or extensions
-├── stop-all.sh           # Stop every running lab
-└── stop-other-labs.sh    # Helper used by each lab's start.sh
-```
 
 Each lab folder is self-contained: it owns its `docker-compose.yml`, scripts, modelfiles, and README.
 
