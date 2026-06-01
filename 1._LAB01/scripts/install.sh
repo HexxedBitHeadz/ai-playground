@@ -51,7 +51,13 @@ if [[ "${HEBI_LITE:-0}" == "1" ]]; then
   progress_detail "LITE mode — only tinyllama:1.1b, llama3.2:1b"
 fi
 mkdir -p logs data/chroma 2>/dev/null || true
-chmod 777 logs data data/chroma 2>/dev/null || true
+# Set 777 via a temp container — host chmod silently fails when these
+# dirs were previously created by a container (root:root) and re-run by
+# a non-root user. The webui runs as uid 1001 (appuser) and needs write
+# access for logs/webui-interactions.log; chroma needs write for /data.
+docker run --rm -v "$(pwd):/lab" alpine \
+  chmod -R 777 /lab/logs /lab/data 2>/dev/null || \
+  chmod -R 777 logs data 2>/dev/null || true
 
 # Ensure the shared ollama model volume exists. setup.sh creates it for
 # users who follow the documented setup path; this is the lazy fallback
