@@ -1,6 +1,6 @@
 # HeBi AI Playground
 
-A hands-on collection of offensive and defensive AI security labs by Hexxed BitHeadz. Each lab is a self-contained scenario that runs locally against open-weight LLMs. **No external API calls. No paid services.**
+A hands-on collection of offensive and defensive AI security labs by Hexxed BitHeadz. Each lab is a self-contained scenario that runs locally against open-weight LLMs. **No external API calls. No paid services.** Tested on Windows host with Ubuntu WSL.
 
 A web dashboard lets you start and stop labs and links you to each lab's WebUI.
 
@@ -9,9 +9,8 @@ A web dashboard lets you start and stop labs and links you to each lab's WebUI.
 ## Quick start
 
 ```bash
-git clone <this-repo> hebi-ai-playground
-cd hebi-ai-playground
-
+sudo apt update
+git clone https://github.com/HexxedBitHeadz/ai-playground && cd ai-playground
 ./setup.sh                          # creates .env files from templates
 ./install-lab.sh 01                 # registers LAB 01 with the dashboard
 cd service-dashboard
