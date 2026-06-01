@@ -2,7 +2,7 @@
   "id": "lab01",
   "name": "LAB 01",
   "title": "Playground Tour",
-  "description": "Get oriented with the lab environment — the dashboard, the WebUI, the verdict system (refused / partial / complied), and the hebi-* target archetypes — while running your first prompt-injection attacks against locally-hosted LLMs.",
+  "description": "Get familiar with the lab environment and PromptSlinger.",
   "difficulty": "Beginner",
   "topic": "Intro",
   "port": 8081,
